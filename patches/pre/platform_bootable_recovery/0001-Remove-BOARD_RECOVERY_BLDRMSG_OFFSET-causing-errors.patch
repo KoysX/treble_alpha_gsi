@@ -1,0 +1,33 @@
+From 0354c099227923233dfdfb43be200aca0ce36fa7 Mon Sep 17 00:00:00 2001
+From: FrEeRuNnEr4EvEr <ledrew101806@gmail.com>
+Date: Wed, 10 May 2023 03:22:10 -0400
+Subject: [PATCH] Remove BOARD_RECOVERY_BLDRMSG_OFFSET causing errors
+
+Change-Id: If544bc9e21d74ac0a1b4db1397e49adf3e205cb2
+---
+ .../include/bootloader_message/bootloader_message.h    | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/bootloader_message/include/bootloader_message/bootloader_message.h b/bootloader_message/include/bootloader_message/bootloader_message.h
+index 45041e5..d58158d 100644
+--- a/bootloader_message/include/bootloader_message/bootloader_message.h
++++ b/bootloader_message/include/bootloader_message/bootloader_message.h
+@@ -29,11 +29,11 @@
+ // 32K - 64K    System space, used for miscellanious AOSP features. See below.
+ // Note that these offsets are admitted by bootloader,recovery and uncrypt, so they
+ // are not configurable without changing all of them.
+-constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = BOARD_RECOVERY_BLDRMSG_OFFSET;
+-constexpr size_t VENDOR_SPACE_OFFSET_IN_MISC = 2 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+-constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+-constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+-constexpr size_t SYSTEM_SPACE_SIZE_IN_MISC = 32 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
++constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 0;
++constexpr size_t VENDOR_SPACE_OFFSET_IN_MISC = 2 * 1024;
++constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024;
++constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024;
++constexpr size_t SYSTEM_SPACE_SIZE_IN_MISC = 32 * 1024;
+
+ /* Bootloader Message (2-KiB)
+  *
+-- 
+2.39.2

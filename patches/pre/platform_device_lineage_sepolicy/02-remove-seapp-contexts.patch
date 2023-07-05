@@ -1,0 +1,21 @@
+From 561b1161f4fab31c6456ae40da5eefd6338a374d Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Wed, 5 Jul 2023 09:15:43 +0800
+Subject: [PATCH] remove-seapp-contexts
+
+---
+ common/dynamic/seapp_contexts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/common/dynamic/seapp_contexts b/common/dynamic/seapp_contexts
+index f4775d5..1d1311b 100644
+--- a/common/dynamic/seapp_contexts
++++ b/common/dynamic/seapp_contexts
+@@ -1,2 +1,2 @@
+-user=_app seinfo=platform name=com.google.android.flipendo domain=flipendo type=app_data_file levelFrom=all
+-user=_app seinfo=platform name=com.google.android.turboadapter domain=turbo_adapter type=app_data_file levelFrom=all
++#user=_app seinfo=platform name=com.google.android.flipendo domain=flipendo type=app_data_file levelFrom=all
++#user=_app seinfo=platform name=com.google.android.turboadapter domain=turbo_adapter type=app_data_file levelFrom=all
+-- 
+2.20.1
+

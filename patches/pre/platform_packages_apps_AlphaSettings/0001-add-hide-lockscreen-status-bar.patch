@@ -1,0 +1,60 @@
+From 2a96ef2785e43a6021ce4521d70f83167a315765 Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Wed, 5 Jul 2023 09:11:25 +0800
+Subject: [PATCH] add-hide-lockscreen-status-bar
+
+---
+ res/values-zh-rCN/cr_strings.xml      | 3 +++
+ res/values/cr_strings.xml             | 4 ++++
+ res/xml/alpha_settings_lockscreen.xml | 6 ++++++
+ 3 files changed, 13 insertions(+)
+
+diff --git a/res/values-zh-rCN/cr_strings.xml b/res/values-zh-rCN/cr_strings.xml
+index a3f2891..87bc678 100644
+--- a/res/values-zh-rCN/cr_strings.xml
++++ b/res/values-zh-rCN/cr_strings.xml
+@@ -135,6 +135,9 @@
+     <!-- Lockscreen battery info indicator -->
+     <string name="lockscreen_battery_info_title">电池信息</string>
+     <string name="lockscreen_battery_info_summary">充电时显示电池信息</string>
++    <!-- Hide Status bar on lock screen -->
++    <string name="hide_lockscreen_status_bar_title">隐藏状态栏</string>
++    <string name="hide_lockscreen_status_bar_summary">触摸状态栏以切换可见性</string>
+     <!-- Button settings -->
+     <string name="extras_title">附加功能</string>
+     <string name="additional_buttons_title">更多按键</string>
+diff --git a/res/values/cr_strings.xml b/res/values/cr_strings.xml
+index d3db898..722fea7 100644
+--- a/res/values/cr_strings.xml
++++ b/res/values/cr_strings.xml
+@@ -164,6 +164,10 @@
+     <string name="lockscreen_battery_info_title">Battery info</string>
+     <string name="lockscreen_battery_info_summary">Display battery info when charging</string>
+ 
++    <!-- Hide Status bar on lock screen -->
++    <string name="hide_lockscreen_status_bar_title">Hide status bar</string>
++    <string name="hide_lockscreen_status_bar_summary">Touch status bar to toggle visibility</string>
++
+     <!-- Button settings -->
+     <string name="extras_title">Extras</string>
+     <string name="additional_buttons_title">Additional buttons</string>
+diff --git a/res/xml/alpha_settings_lockscreen.xml b/res/xml/alpha_settings_lockscreen.xml
+index 51e29b8..e9efc58 100644
+--- a/res/xml/alpha_settings_lockscreen.xml
++++ b/res/xml/alpha_settings_lockscreen.xml
+@@ -64,6 +64,12 @@
+             android:defaultValue="180"
+             settings:units="@string/unit_pixels" />
+ 
++        <com.alpha.settings.preferences.SystemSettingSwitchPreference
++            android:key="hide_lockscreen_status_bar"
++            android:title="@string/hide_lockscreen_status_bar_title"
++            android:summary="@string/hide_lockscreen_status_bar_summary"
++            android:defaultValue="false" />
++
+     </PreferenceCategory>
+ 
+     <PreferenceCategory
+-- 
+2.20.1
+

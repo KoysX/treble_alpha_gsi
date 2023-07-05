@@ -1,0 +1,194 @@
+From fd4666e9ccdba5f60d4bfc54e6b4847b716adad6 Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Wed, 5 Jul 2023 08:57:36 +0800
+Subject: [PATCH] add-Hide-Status-bar-on-Lock-screen
+
+---
+ core/java/android/provider/Settings.java      |  5 +
+ .../NotificationPanelViewController.java      |  7 +-
+ .../phone/KeyguardStatusBarView.java          | 99 ++++++++++++++++++-
+ 3 files changed, 108 insertions(+), 3 deletions(-)
+
+diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java
+index c9835bd7..26cbf9ca 100644
+--- a/core/java/android/provider/Settings.java
++++ b/core/java/android/provider/Settings.java
+@@ -6403,6 +6403,11 @@ public final class Settings {
+          */
+         public static final String STATUSBAR_TOP_PADDING = "statusbar_top_padding";
+ 
++        /**
++         * Hide Statusbar on LockScreen
++         * @hide
++         */
++        public static final String HIDE_LOCKSCREEN_STATUS_BAR = "hide_lockscreen_status_bar";
+ 
+         /**
+          * @hide
+diff --git a/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java b/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
+index 4449c4e8..628b6f92 100644
+--- a/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
++++ b/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
+@@ -2589,9 +2589,9 @@ public final class NotificationPanelViewController implements Dumpable {
+             return;
+         }
+         // There are two possible panel expansion behaviors:
+-        // â€¢ User dragging up to unlock: we want to fade out as quick as possible
++        // â€? User dragging up to unlock: we want to fade out as quick as possible
+         //   (ALPHA_EXPANSION_THRESHOLD) to avoid seeing the bouncer over the bottom area.
+-        // â€¢ User tapping on lock screen: bouncer won't be visible but panel expansion will
++        // â€? User tapping on lock screen: bouncer won't be visible but panel expansion will
+         //   change due to "unlock hint animation." In this case, fading out the bottom area
+         //   would also hide the message that says "swipe to unlock," we don't want to do that.
+         float expansionAlpha = MathUtils.map(
+@@ -4561,6 +4561,9 @@ public final class NotificationPanelViewController implements Dumpable {
+                             /* alpha= */ 1f,
+                             keyguardShowing ? View.VISIBLE : View.INVISIBLE);
+                 }
++                if (keyguardShowing) {
++                    mKeyguardStatusBar.toggleContents(true);
++                }
+                 if (keyguardShowing && oldState != mBarState) {
+                     mQsController.hideQsImmediately();
+                 }
+diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardStatusBarView.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardStatusBarView.java
+index 3cb092c7..9995900f 100644
+--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardStatusBarView.java
++++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardStatusBarView.java
+@@ -20,6 +20,11 @@ import static com.android.systemui.ScreenDecorations.DisplayCutoutView.boundsFro
+ import static com.android.systemui.util.Utils.getStatusBarHeaderHeightKeyguard;
+ 
+ import android.annotation.ColorInt;
++import android.animation.Animator;
++import android.animation.AnimatorSet;
++import android.animation.ObjectAnimator;
++import android.animation.AnimatorListenerAdapter;
++import android.content.ContentResolver;
+ import android.content.Context;
+ import android.content.res.Configuration;
+ import android.content.res.Resources;
+@@ -27,6 +32,8 @@ import android.graphics.Color;
+ import android.graphics.Rect;
+ import android.graphics.drawable.Drawable;
+ import android.os.Trace;
++import android.os.UserHandle;
++import android.provider.Settings;
+ import android.util.AttributeSet;
+ import android.util.Pair;
+ import android.util.TypedValue;
+@@ -75,6 +82,8 @@ public class KeyguardStatusBarView extends RelativeLayout {
+     private StatusIconContainer mStatusIconContainer;
+     private StatusBarUserSwitcherContainer mUserSwitcherContainer;
+ 
++    private boolean mHideContents;
++
+     private boolean mKeyguardUserSwitcherEnabled;
+     private boolean mKeyguardUserAvatarEnabled;
+ 
+@@ -217,7 +226,7 @@ public class KeyguardStatusBarView extends RelativeLayout {
+             // we only show the multi-user switch if it's enabled through UserManager as well as
+             // by the user.
+             if (mIsUserSwitcherEnabled) {
+-                mMultiUserAvatar.setVisibility(View.VISIBLE);
++                mMultiUserAvatar.setVisibility(mHideContents ? View.INVISIBLE : View.VISIBLE);
+             } else {
+                 mMultiUserAvatar.setVisibility(View.GONE);
+             }
+@@ -484,6 +493,94 @@ public class KeyguardStatusBarView extends RelativeLayout {
+         }
+     }
+ 
++    public void toggleContents(boolean hideContents) {
++        boolean shouldHideContents = Settings.System.getIntForUser(
++                getContext().getContentResolver(), Settings.System.HIDE_LOCKSCREEN_STATUS_BAR, 0,
++                UserHandle.USER_CURRENT) == 1;
++        if (!shouldHideContents) {
++            hideContents = false;
++        }
++        if (mHideContents == hideContents) {
++            return;
++        }
++        mHideContents = hideContents;
++        if (mHideContents) {
++            Animator fadeAnimator1 = null;
++            if (mMultiUserAvatar.getVisibility() != View.GONE) {
++                fadeAnimator1 = ObjectAnimator.ofFloat(mMultiUserAvatar, "alpha", 1f, 0f);
++                fadeAnimator1.setDuration(500);
++                fadeAnimator1.setInterpolator(Interpolators.ALPHA_OUT);
++                fadeAnimator1.addListener(new AnimatorListenerAdapter() {
++                    @Override
++                    public void onAnimationEnd(Animator animation) {
++                        mMultiUserAvatar.setVisibility(View.INVISIBLE);
++                    }
++                });
++            }
++            Animator fadeAnimator2 = ObjectAnimator.ofFloat(mSystemIconsContainer, "alpha", 1f, 0f);
++            fadeAnimator2.setDuration(500);
++            fadeAnimator2.setInterpolator(Interpolators.ALPHA_OUT);
++            fadeAnimator2.addListener(new AnimatorListenerAdapter() {
++                @Override
++                public void onAnimationEnd(Animator animation) {
++                    mSystemIconsContainer.setVisibility(View.INVISIBLE);
++                }
++            });
++            Animator fadeAnimator3 = null;
++            if (mCarrierLabel.getVisibility() != View.GONE) {
++                fadeAnimator3 = ObjectAnimator.ofFloat(mCarrierLabel, "alpha", 1f, 0f);
++                fadeAnimator3.setDuration(500);
++                fadeAnimator3.setInterpolator(Interpolators.ALPHA_OUT);
++                fadeAnimator3.addListener(new AnimatorListenerAdapter() {
++                    @Override
++                    public void onAnimationEnd(Animator animation) {
++                        mCarrierLabel.setVisibility(View.INVISIBLE);
++                    }
++                });
++            }
++            AnimatorSet set = new AnimatorSet();
++            set.playTogether(fadeAnimator2);
++            if (fadeAnimator3 != null) {
++                set.playTogether(fadeAnimator3);
++            }
++            if (fadeAnimator1 != null) {
++                set.playTogether(fadeAnimator1);
++            }
++            set.start();
++        } else {
++            Animator fadeAnimator1 = null;
++            if (mMultiUserAvatar.getVisibility() != View.GONE) {
++                mMultiUserAvatar.setAlpha(0f);
++                mMultiUserAvatar.setVisibility(View.VISIBLE);
++                fadeAnimator1 = ObjectAnimator.ofFloat(mMultiUserAvatar, "alpha", 0f, 1f);
++                fadeAnimator1.setDuration(500);
++                fadeAnimator1.setInterpolator(Interpolators.ALPHA_IN);
++            }
++            mSystemIconsContainer.setAlpha(0f);
++            mSystemIconsContainer.setVisibility(View.VISIBLE);
++            Animator fadeAnimator2 = ObjectAnimator.ofFloat(mSystemIconsContainer, "alpha", 0f, 1f);
++            fadeAnimator2.setDuration(500);
++            fadeAnimator2.setInterpolator(Interpolators.ALPHA_IN);
++            Animator fadeAnimator3 = null;
++            if (mCarrierLabel.getVisibility() != View.GONE) {
++                mCarrierLabel.setAlpha(0f);
++                mCarrierLabel.setVisibility(View.VISIBLE);
++                fadeAnimator3 = ObjectAnimator.ofFloat(mCarrierLabel, "alpha", 0f, 1f);
++                fadeAnimator3.setDuration(500);
++                fadeAnimator3.setInterpolator(Interpolators.ALPHA_IN);
++            }
++            AnimatorSet set = new AnimatorSet();
++            set.playTogether(fadeAnimator2);
++            if (fadeAnimator3 != null) {
++                set.playTogether(fadeAnimator3);
++            }
++            if (fadeAnimator1 != null) {
++                set.playTogether(fadeAnimator1);
++            }
++            set.start();
++        }
++    }
++
+     /** Should only be called from {@link KeyguardStatusBarViewController}. */
+     void dump(PrintWriter pw, String[] args) {
+         pw.println("KeyguardStatusBarView:");
+-- 
+2.20.1
+

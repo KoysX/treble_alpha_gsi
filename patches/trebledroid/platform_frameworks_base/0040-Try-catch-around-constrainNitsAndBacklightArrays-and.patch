@@ -1,0 +1,86 @@
+From 7385012e58a08708b7c2c800261c7efe04b55886 Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Wed, 5 Jul 2023 00:19:54 +0800
+Subject: [PATCH] Try-catch-around-constrainNitsAndBacklightArrays-and
+
+---
+ .../server/display/DisplayDeviceConfig.java   | 58 ++++++++++---------
+ 1 file changed, 32 insertions(+), 26 deletions(-)
+
+diff --git a/services/core/java/com/android/server/display/DisplayDeviceConfig.java b/services/core/java/com/android/server/display/DisplayDeviceConfig.java
+index c36c5b6c..0cf2245f 100644
+--- a/services/core/java/com/android/server/display/DisplayDeviceConfig.java
++++ b/services/core/java/com/android/server/display/DisplayDeviceConfig.java
+@@ -1703,37 +1703,43 @@ public class DisplayDeviceConfig {
+             return;
+         }
+ 
+-        // Use the (preferred) display device config mapping
+-        final List<Point> points = map.getPoint();
+-        final int size = points.size();
+-
+-        float[] nits = new float[size];
+-        float[] backlight = new float[size];
++        try {
++            // Use the (preferred) display device config mapping
++            final List<Point> points = map.getPoint();
++            final int size = points.size();
+ 
+-        mInterpolationType = convertInterpolationType(map.getInterpolation());
+-        int i = 0;
+-        for (Point point : points) {
+-            nits[i] = point.getNits().floatValue();
+-            backlight[i] = point.getValue().floatValue();
+-            if (i > 0) {
+-                if (nits[i] < nits[i - 1]) {
+-                    Slog.e(TAG, "screenBrightnessMap must be non-decreasing, ignoring rest "
+-                            + " of configuration. Nits: " + nits[i] + " < " + nits[i - 1]);
+-                    return;
+-                }
++            float[] nits = new float[size];
++            float[] backlight = new float[size];
+ 
+-                if (backlight[i] < backlight[i - 1]) {
+-                    Slog.e(TAG, "screenBrightnessMap must be non-decreasing, ignoring rest "
+-                            + " of configuration. Value: " + backlight[i] + " < "
+-                            + backlight[i - 1]);
+-                    return;
++            mInterpolationType = convertInterpolationType(map.getInterpolation());
++            int i = 0;
++            for (Point point : points) {
++                nits[i] = point.getNits().floatValue();
++                backlight[i] = point.getValue().floatValue();
++                if (i > 0) {
++                    if (nits[i] < nits[i - 1]) {
++                        Slog.e(TAG, "screenBrightnessMap must be non-decreasing, ignoring rest "
++                                + " of configuration. Nits: " + nits[i] + " < " + nits[i - 1]);
++                        return;
++                    }
++
++                    if (backlight[i] < backlight[i - 1]) {
++                        Slog.e(TAG, "screenBrightnessMap must be non-decreasing, ignoring rest "
++                                + " of configuration. Value: " + backlight[i] + " < "
++                                + backlight[i - 1]);
++                        return;
++                    }
+                 }
++                ++i;
+             }
+-            ++i;
++            mRawNits = nits;
++            mRawBacklight = backlight;
++            constrainNitsAndBacklightArrays();
++        } catch(Throwable t) {
++            mRawNits = null;
++            mRawBacklight = null;
++            setSimpleMappingStrategyValues();
+         }
+-        mRawNits = nits;
+-        mRawBacklight = backlight;
+-        constrainNitsAndBacklightArrays();
+     }
+ 
+     private Spline loadSdrHdrRatioMap(HighBrightnessMode hbmConfig) {
+-- 
+2.20.1
+

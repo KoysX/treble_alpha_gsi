@@ -1,0 +1,41 @@
+From 4d44ed35f7dd80b91d307b8169fcd2c498fc550a Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Tue, 4 Jul 2023 23:14:25 +0800
+Subject: [PATCH] lite
+
+---
+ common/common-vendor.mk | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/common/common-vendor.mk b/common/common-vendor.mk
+index 951157e..207b1d6 100644
+--- a/common/common-vendor.mk
++++ b/common/common-vendor.mk
+@@ -57,13 +57,10 @@ PRODUCT_PACKAGES += \
+     GoogleServicesFramework \
+     LatinIMEGooglePrebuilt \
+     Phonesky \
+-    PixelSetupWizard \
+     PrebuiltGmsCoreSc \
+-    SetupWizardPrebuilt \
+     TrichromeLibrary \
+     TrichromeLibrary-Stub \
+     GoogleTTS \
+-    Velvet \
+     WebViewGoogle \
+     WebViewGoogle-Stub
+ 
+@@ -94,10 +91,7 @@ endif
+ # FULL GAPPS (expand core gapps)
+ ifeq ($(strip $(GAPPS_BUILD_TYPE)),2)
+ PRODUCT_PACKAGES += \
+-    AndroidAutoStubPrebuilt \
+     CalendarGooglePrebuilt \
+-    Chrome \
+-    Chrome-Stub \
+     GooglePrintRecommendationService \
+     LocationHistoryPrebuilt \
+     MarkupGoogle \
+-- 
+2.20.1
+

@@ -1,0 +1,28 @@
+From 65fa559a8e57a51ffcc76c75d37a18c8fe9037ee Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Wed, 5 Jul 2023 16:06:25 +0800
+Subject: [PATCH] fix-build-error
+
+---
+ .../systemui/shade/NotificationPanelViewController.java       | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java b/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
+index 628b6f92..e4cc57a3 100644
+--- a/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
++++ b/packages/SystemUI/src/com/android/systemui/shade/NotificationPanelViewController.java
+@@ -2589,9 +2589,9 @@ public final class NotificationPanelViewController implements Dumpable {
+             return;
+         }
+         // There are two possible panel expansion behaviors:
+-        // â€? User dragging up to unlock: we want to fade out as quick as possible
++        //  User dragging up to unlock: we want to fade out as quick as possible
+         //   (ALPHA_EXPANSION_THRESHOLD) to avoid seeing the bouncer over the bottom area.
+-        // â€? User tapping on lock screen: bouncer won't be visible but panel expansion will
++        //  User tapping on lock screen: bouncer won't be visible but panel expansion will
+         //   change due to "unlock hint animation." In this case, fading out the bottom area
+         //   would also hide the message that says "swipe to unlock," we don't want to do that.
+         float expansionAlpha = MathUtils.map(
+-- 
+2.20.1
+

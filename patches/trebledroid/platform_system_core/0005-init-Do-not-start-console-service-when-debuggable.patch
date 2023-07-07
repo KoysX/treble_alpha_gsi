@@ -1,0 +1,26 @@
+From 99d249c3b4be0c87c16dadf84ad71a0dcee00f0c Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Fri, 7 Jul 2023 09:41:05 +0800
+Subject: [PATCH] init-Do-not-start-console-service-when-debuggable
+
+---
+ rootdir/init.rc | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/rootdir/init.rc b/rootdir/init.rc
+index f72dd4d..a4dd65b 100644
+--- a/rootdir/init.rc
++++ b/rootdir/init.rc
+@@ -1270,9 +1270,6 @@ on property:ro.debuggable=1
+     # Give reads to anyone for the accessibility trace folder on debug builds.
+     chmod 0775 /data/misc/a11ytrace
+ 
+-on init && property:ro.debuggable=1 && property:ro.console.enable=1
+-    start console
+-
+ on userspace-reboot-requested
+   # TODO(b/135984674): reset all necessary properties here.
+   setprop sys.boot_completed ""
+-- 
+2.20.1
+

@@ -1,0 +1,29 @@
+From 24aa7e589a9376399217b3ec6c5ca11f165c8f04 Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Fri, 7 Jul 2023 09:45:59 +0800
+Subject: [PATCH] remove-fs-mgr-comment
+
+---
+ fs_mgr/fs_mgr_fstab.cpp | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/fs_mgr/fs_mgr_fstab.cpp b/fs_mgr/fs_mgr_fstab.cpp
+index f7436a8..2e76a04 100644
+--- a/fs_mgr/fs_mgr_fstab.cpp
++++ b/fs_mgr/fs_mgr_fstab.cpp
+@@ -309,12 +309,6 @@ bool ParseFsMgrFlags(const std::string& flags, FstabEntry* entry) {
+             LWARNING << "Warning: unknown flag: " << flag;
+         }
+     }
+-
+-    // FDE is no longer supported, so reject "encryptable" when used without
+-    // "vold_managed".  For now skip this check when in recovery mode, since
+-    // some recovery fstabs still contain the FDE options since they didn't do
+-    // anything in recovery mode anyway (except possibly to cause the
+-    // reservation of a crypto footer) and thus never got removed.
+     return true;
+ }
+ 
+-- 
+2.20.1
+

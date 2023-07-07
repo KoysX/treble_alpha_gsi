@@ -1,0 +1,24 @@
+From 91dff37ff34ca15ec24201f156f2a64a430f524f Mon Sep 17 00:00:00 2001
+From: KoysX <2685697179b@gmail.com>
+Date: Fri, 7 Jul 2023 10:36:15 +0800
+Subject: [PATCH] Add-Mediatek-power-hints-on-touch-moudle
+
+---
+ services/core/Android.bp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/services/core/Android.bp b/services/core/Android.bp
+index 030202d7..fa5c16e4 100644
+--- a/services/core/Android.bp
++++ b/services/core/Android.bp
+@@ -179,6 +179,7 @@ java_library_static {
+         "com.android.sysprop.watchdog",
+         "faceunlock_framework",
+         // HIDL
++        "vendor.mediatek.hardware.mtkpower-V1.1-java",
+         "vendor.samsung.hardware.sysinput-V1.2-java",
+         "vendor.goodix.hardware.biometrics.fingerprint-V2.1-java",
+         "vendor.samsung.hardware.biometrics.fingerprint-V3.0-java",
+-- 
+2.20.1
+

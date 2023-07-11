@@ -33,11 +33,11 @@ index 4449c4e8..628b6f92 100644
              return;
          }
          // There are two possible panel expansion behaviors:
--        // • User dragging up to unlock: we want to fade out as quick as possible
-+        // �? User dragging up to unlock: we want to fade out as quick as possible
+-        // â€¢ User dragging up to unlock: we want to fade out as quick as possible
++        // User dragging up to unlock: we want to fade out as quick as possible
          //   (ALPHA_EXPANSION_THRESHOLD) to avoid seeing the bouncer over the bottom area.
--        // • User tapping on lock screen: bouncer won't be visible but panel expansion will
-+        // �? User tapping on lock screen: bouncer won't be visible but panel expansion will
+-        // â€¢ User tapping on lock screen: bouncer won't be visible but panel expansion will
++        // User tapping on lock screen: bouncer won't be visible but panel expansion will
          //   change due to "unlock hint animation." In this case, fading out the bottom area
          //   would also hide the message that says "swipe to unlock," we don't want to do that.
          float expansionAlpha = MathUtils.map(
